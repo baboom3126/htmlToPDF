@@ -8,7 +8,7 @@
   <link rel='stylesheet' href='/stylesheets/style.css' />
   <style>
     img {
-      height: 80px;
+      height: 100px;
 
     }
   </style>
@@ -51,6 +51,8 @@
   </h1>
   <p>Welcome to <%= title %>
   </p>
+  <div><button onclick="javascript:toPDF()">Export PDF</button></div>
+  <br>
   <div class='pasteable' contenteditable style="height: 100px;background-color: lightgray;">paste image here</div>
 
   <div id="div_for_pasted_img"></div>
@@ -62,19 +64,23 @@
     const file = dT.files[0];
     console.log(file);
   };
+  var counter = 0
+  var pasteable_div = document.getElementsByClassName('pasteable')[0]
+  pasteable_div.addEventListener('DOMNodeInserted', function () {
+    console.log('inserted')
+    counter++
+    if(counter%2==1){
+      
+    var pastedImageSrc = document.querySelector('.pasteable img').src
+      toDataURL(pastedImageSrc, function (dataUrl) {
+        console.log('RESULT:', dataUrl)
+        pasteable_div.innerHTML = 'paste image here'
 
-  var a = document.getElementsByClassName('pasteable')[0]
-  a.addEventListener('DOMNodeInserted', function () {
-    console.log()
-    toDataURL(document.querySelector('.pasteable img').src, function (dataUrl) {
-      console.log('RESULT:', dataUrl)
-      document.getElementsByClassName('pasteable')[0].innerHTML = 'paste image here'
-
-      document.getElementById('div_for_pasted_img').innerHTML+=`  <img src="${dataUrl}" alt="Red dot" />`
+        document.getElementById('div_for_pasted_img').innerHTML += `  <img src="${dataUrl}" alt="" />`
 
 
-    })
-
+      })
+    }
 
   })
 
