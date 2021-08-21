@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>
+    <%= title %>
+  </title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <style>
+    img {
+      height: 80px;
+
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+  <script>
+    function addScript(url) {
+      var script = document.createElement('script');
+      script.type = 'application/javascript';
+      script.src = url;
+      document.head.appendChild(script);
+    }
+    addScript('https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js');
+
+    function toPDF() {
+      var element = document.body
+      var opt = {
+        margin: 0,
+        filename: 'myfile.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+        },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+
+      // New Promise-based usage:
+      html2pdf().set(opt).from(element).save();
+    }
+
+
+
+
+  </script>
+
+</head>
+
+<body>
+  <h1>
+    <%= title %>
+  </h1>
+  <p>Welcome to <%= title %>
+  </p>
+  <div class='pasteable' contenteditable style="height: 100px;background-color: lightgray;">paste image here</div>
+
+  <div id="div_for_pasted_img"></div>
+
+</body>
+<script>
+  document.onpaste = (evt) => {
+    const dT = evt.clipboardData || window.clipboardData;
+    const file = dT.files[0];
+    console.log(file);
+  };
+
+  var a = document.getElementsByClassName('pasteable')[0]
+  a.addEventListener('DOMNodeInserted', function () {
+    console.log()
+    toDataURL(document.querySelector('.pasteable img').src, function (dataUrl) {
+      console.log('RESULT:', dataUrl)
+      document.getElementsByClassName('pasteable')[0].innerHTML = 'paste image here'
+
+      document.getElementById('div_for_pasted_img').innerHTML+=`  <img src="${dataUrl}" alt="Red dot" />`
+
+
+    })
+
+
+  })
+
+
+  function toDataURL(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        callback(reader.result);
+      }
+      reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
+  }
+
+
+
+
+</script>
+
+</html>
